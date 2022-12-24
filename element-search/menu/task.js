@@ -1,5 +1,5 @@
 const mainMenu = document.querySelector('.menu_main');
-const menuElements = document.querySelectorAll('.menu_sub')
+const menuElements = document.querySelectorAll('.menu_sub');
 
 function checkingMenu() {
     menuElements.forEach( element => {
@@ -25,5 +25,5 @@ mainMenu.addEventListener('click', (e) => {
 
         e.target.nextElementSibling.classList.remove('menu_active');
         e.target.nextElementSibling.classList.add('menu_sub');
-    }
+    };
 })

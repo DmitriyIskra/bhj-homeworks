@@ -1,7 +1,6 @@
-document.querySelector('#modal_main').classList.add('modal_active')
+document.querySelector('#modal_main').classList.add('modal_active');
 
-
-const modalsWindows = document.querySelectorAll('.modal')
+const modalsWindows = document.querySelectorAll('.modal');
 
 function closeModalWindow() {
     modalsWindows.forEach( element => {
@@ -19,6 +18,6 @@ document.addEventListener('click', event => {
     }
     else if(event.target.closest('.modal__close') || event.target.closest('.btn_success')) {
         closeModalWindow();
-    }
+    };
 });
 
