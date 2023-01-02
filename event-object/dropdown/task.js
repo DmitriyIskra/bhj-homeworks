@@ -5,7 +5,7 @@ let activeText;
 
 
 function addClassActive(element) {
-    element.classList.add('dropdown__list_active');
+    element.classList.toggle('dropdown__list_active');
 };
 
 function removeClassActive(element) {
