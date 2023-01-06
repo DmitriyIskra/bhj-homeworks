@@ -5,7 +5,7 @@ class Game {
     this.winsElement = container.querySelector('.status__wins');
     this.lossElement = container.querySelector('.status__loss');
 
-    this.reset();
+    this.reset(); 
 
     this.registerEvents(); 
   }
