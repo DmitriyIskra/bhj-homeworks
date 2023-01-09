@@ -114,22 +114,7 @@ interestsMain.addEventListener('click', e => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Простая версия
 
 // interestsCheck.forEach( element => {
 //     element.addEventListener('change', event => {
