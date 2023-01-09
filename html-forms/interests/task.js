@@ -2,15 +2,17 @@ const interestsCheck = document.querySelectorAll('.interest__check');
 const interestsMain = document.querySelector('.interests_main');
 
 let childElementsCollection = [];
-let parentElementsCollection = [];
+let parentElementsCollection = []; 
+let siblingElementsCollection = [];
 let previousElementInterest;
+let conditionSibling;
+let conditionUpperIndeterminate;
 // Пок кликнутому чекбоксу выйти на родителя и внутри с помощь. queryselector собрать все чекбокси в коллекцию или массив
 
 /////// ==================== START Работа с дочерними элементами 
 
 function collectingChildElements(element) {  // Проверка на наличие соседа с определенным классом и сбор элементов с определенным классом
     if(element.closest('label').nextElementSibling && element.closest('label').nextElementSibling.classList.contains('interests_active')) {
-        console.log(element.closest('label').nextElementSibling.classList.contains('interests_active'))
         childElementsCollection = element.closest('label').nextElementSibling.querySelectorAll('.interest__check');    
     }
     else {
@@ -34,7 +36,7 @@ function addCheckedToChildsElements(element) { // Присвоение акти�
 /////// ==================== END Работа с дочерними элементами 
 
 
-/////// ==================== START Работа с верхними элементами
+/////// ==================== START Работа с верхними элементами checked or indeterminate 
 
 function collectingCollectionUpperCheckboxes(el, activeCheckbox) {  // Собираем коллекцию верхних чекбоксов
     previousElementInterest = el.parentElement.closest('.interest');
@@ -45,7 +47,7 @@ function collectingCollectionUpperCheckboxes(el, activeCheckbox) {  // Соби�
     
     if (previousElementInterest === null) {
                 // передаем массив в следующую функцию обработчик
-        addCheckedUpperCheckboxes(parentElementsCollection, activeCheckbox);
+        checkCollectionSiblingCheckboxes(activeCheckbox);
 
                 // обнуляем массив, промежуточную переменную нет необходимости, после последней итерации так как элемента нет, там null
         parentElementsCollection = [];
@@ -55,11 +57,42 @@ function collectingCollectionUpperCheckboxes(el, activeCheckbox) {  // Соби�
     collectingCollectionUpperCheckboxes(previousElementInterest, activeCheckbox);
 };
 
-function addCheckedUpperCheckboxes(arr, activeCheckbox) {  // Присваиваем состояние верхним checkbox
-    arr.forEach(el => el.checked = activeCheckbox.checked === true ? true : false);
+function checkCollectionSiblingCheckboxes(activeCheckbox) {  // Собираем коллекцию чекбоксов на том же уровне и проверяем одинаково ли у них состояние
+
+
+    if(activeCheckbox.closest('.interests_active') !== null) {
+        let preElementsSiblings = [...activeCheckbox.closest('.interests_active').children]; // Предварительный сбор, здесь лежит массив из соседствующих элементов li
+        preElementsSiblings.forEach( element => siblingElementsCollection.push( element.querySelector('input') ) ); // На основе предварительного сбора, собираем массив из соседствующих элементов чекбокс
+        if(activeCheckbox.checked === true) { // Проверка все ли соседние чекбоксы в одинаковом состоянии
+            conditionSibling = siblingElementsCollection.every( element => element.checked === true);
+        }
+        else if(activeCheckbox.checked === false) {
+            conditionSibling = siblingElementsCollection.every( element => element.checked === false);
+        };
+        addCheckedUpperCheckboxes(parentElementsCollection, activeCheckbox, conditionSibling) // Вызываем функцию присвоения состояния родительским чекбоксам на основе сбора данных
+    }
+    else {
+        return;
+    };
+}
+
+function addCheckedUpperCheckboxes(arr, activeCheckbox, conditionSibling) {  // Присваиваем состояние верхним checkbox  // conditionSibling
+    conditionUpperIndeterminate = arr.every(element => element.indeterminate === true);
+    
+    if(conditionSibling) {
+        arr.forEach(el => el.indeterminate = false);
+        arr.forEach(el => el.checked = activeCheckbox.checked === true ? true : false); // после этого первому элементу родительскому ставим состояние актвного, так как мы по активному проверяем все выбраны или нет
+    }
+    else {
+        arr.forEach(el => el.indeterminate = true);
+    };
+
 };
 
-/////// ==================== END Работа с верхними элементами
+/////// ==================== END Работа с верхними элементами checked=true
+
+
+
 
 
 function addEventListenerToCheckbox(el) {  // Навешивание слушателя собыиий на сработавший элемент
