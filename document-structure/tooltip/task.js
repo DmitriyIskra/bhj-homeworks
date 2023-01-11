@@ -23,8 +23,6 @@ document.addEventListener('click', (e) => {
         tooltip.textContent = valuetooltip;
         tooltip.setAttribute('style', `left: ${positionXClick}px; top: ${positionYClick + 7}px`);
         tooltip.classList.add('tooltip_active');
-
-        console.log(tooltip)
     }
     else {
         tooltip.classList.remove('tooltip_active');
