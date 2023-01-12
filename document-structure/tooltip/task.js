@@ -4,7 +4,6 @@ const elemHasTooltip = document.querySelectorAll('.has-tooltip');
 let valuetooltip;
 let positionXClick;
 let positionYClick;
-let preActiveElement;
 
 elemHasTooltip.forEach(el => el.addEventListener('click', (e) => {
     e.preventDefault();
@@ -27,4 +26,3 @@ elemHasTooltip.forEach(el => el.addEventListener('click', (e) => {
 }));
 
 
-// * В третьем задании, добавление в корзину следует выполнять только по кнопке "Добавить в корзину"...и увеличение колества позиций в корзине так же должно выполняться только по кнопке добавления....Клик по кнопкам плюса и минуса должны менять количество только на витрине (карточке продукта).
