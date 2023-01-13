@@ -77,7 +77,7 @@ function findSiblingElements(activeCheckbox) {
     else {
         parentCheckbox.indeterminate = true;  // При первой проходке если все элементы в коллекции соседних элементов не в одинаковом состоянии, родительскому чекбоксу
     };                                          // актуальной коллекции присваиваем промежуточное состояние.
-    console.log(conditionSibling)
+    
     findSiblingElements(parentCheckbox);
 };
 
