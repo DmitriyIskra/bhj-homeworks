@@ -1,18 +1,16 @@
 const interestsCheck = document.querySelectorAll('.interest__check');
 const interestsMain = document.querySelector('.interests_main');
 
-let childElementsCollection = [];
-let parentElementsCollection = []; 
-let siblingElementsCollection = [];
-let previousElementInterest;
-let conditionSibling;
-let conditionUpperIndeterminate;
-// Пок кликнутому чекбоксу выйти на родителя и внутри с помощь. queryselector собрать все чекбокси в коллекцию или массив
+let childElementsCollection = []; // Коллекция дочерних элементов от активного чекбокса
+let conditionSibling;             // Общее состояние соседних чекбоксов
+let collectionElementsSiblings = []; // Коллекция соседних элементов
+let parentCheckbox;               // Родительский чекбокс
 
-/////// ==================== START Работа с дочерними элементами 
 
-function collectingChildElements(element) {  // Проверка на наличие соседа с определенным классом и сбор элементов с определенным классом
-    if(element.closest('label').nextElementSibling && element.closest('label').nextElementSibling.classList.contains('interests_active')) {
+/////// ==================== START Работа с дочерними элементами, присвоение им состояния по состоянию родительского
+
+function collectingChildElements(element) {  // Проверяем один уровень чекбоксов или больше(по наличию в следующем элементе interests_active), если да собираем в следующем
+    if(element.closest('label').nextElementSibling && element.closest('label').nextElementSibling.classList.contains('interests_active')) { // элементе чекбоксы
         childElementsCollection = element.closest('label').nextElementSibling.querySelectorAll('.interest__check');    
     }
     else {
@@ -20,7 +18,7 @@ function collectingChildElements(element) {  // Проверка на налич
     };
 };
 
-function addCheckedToChildsElements(element) { // Присвоение активный или не активный элемент по состоянию более высокого элемента
+function addCheckedToChildsElements(element) { // Активация или деактивация дочерних чекбоксов по состоянию родительского
     if(childElementsCollection && element.checked === true) {
         childElementsCollection.forEach( el => {    
             el.checked = true;
@@ -31,78 +29,68 @@ function addCheckedToChildsElements(element) { // Присвоение акти�
             el.checked = false;
         });
     };
-}
+};
 
 /////// ==================== END Работа с дочерними элементами 
 
 
-/////// ==================== START Работа с верхними элементами checked or indeterminate 
 
-function collectingCollectionUpperCheckboxes(el, activeCheckbox) {  // Собираем коллекцию верхних чекбоксов
-    previousElementInterest = el.parentElement.closest('.interest');
+function findSiblingElements(activeCheckbox) {
+    let tempElementsSiblings; // Обнулять при выборе другого уровня чекбоксов не нужно так как переменная пересоздается и соответственно обнуляется (всегда свежие данные)
 
-    if(previousElementInterest) {
-        parentElementsCollection.push(previousElementInterest.querySelector('.interest__check'));
-    };
-    
-    if (previousElementInterest === null) {
-                // передаем массив в следующую функцию обработчик
-        checkCollectionSiblingCheckboxes(activeCheckbox);
+    if(activeCheckbox.closest('.interests_active')) {
+        tempElementsSiblings = [...activeCheckbox.closest('.interests_active').children]; // Собрали соседние li на уровне активного
 
-                // обнуляем массив, промежуточную переменную нет необходимости, после последней итерации так как элемента нет, там null
-        parentElementsCollection = [];
-        return;
-    };
+        collectionElementsSiblings = tempElementsSiblings.map(el => el.querySelector('input')); // Собрали коллекцию соседних чекбоксов
 
-    collectingCollectionUpperCheckboxes(previousElementInterest, activeCheckbox);
-};
-
-function checkCollectionSiblingCheckboxes(activeCheckbox) {  // Собираем коллекцию чекбоксов на том же уровне и проверяем одинаково ли у них состояние
-
-
-    if(activeCheckbox.closest('.interests_active') !== null) {
-        let preElementsSiblings = [...activeCheckbox.closest('.interests_active').children]; // Предварительный сбор, здесь лежит массив из соседствующих элементов li
-        preElementsSiblings.forEach( element => siblingElementsCollection.push( element.querySelector('input') ) ); // На основе предварительного сбора, собираем массив из соседствующих элементов чекбокс
-        if(activeCheckbox.checked === true) { // Проверка все ли соседние чекбоксы в одинаковом состоянии
-            conditionSibling = siblingElementsCollection.every( element => element.checked === true);
-        }
-        else if(activeCheckbox.checked === false) {
-            conditionSibling = siblingElementsCollection.every( element => element.checked === false);
-        };
-        addCheckedUpperCheckboxes(parentElementsCollection, activeCheckbox, conditionSibling) // Вызываем функцию присвоения состояния родительским чекбоксам на основе сбора данных
+        parentCheckbox = activeCheckbox.closest('.interests_active').previousElementSibling.querySelector('input'); // Нашли родительский чекбокс
     }
     else {
-        return;
+        return; // Остановка рекурсии когда выше нет класса interests_active и нечего собирать
     };
-}
-
-function addCheckedUpperCheckboxes(arr, activeCheckbox, conditionSibling) {  // Присваиваем состояние верхним checkbox  // conditionSibling
-    conditionUpperIndeterminate = arr.every(element => element.indeterminate === true);
     
-    if(conditionSibling) {
-        arr.forEach(el => el.indeterminate = false);
-        arr.forEach(el => el.checked = activeCheckbox.checked === true ? true : false); // после этого первому элементу родительскому ставим состояние актвного, так как мы по активному проверяем все выбраны или нет
+
+
+    let checkIndeterminate = collectionElementsSiblings[0].indeterminate // Проверка первого элемента в коллекции соседних на промежуточное состояние
+
+
+
+    if(checkIndeterminate) {
+        conditionSibling = 'indeterminate';  // Если по результатам проверки выше true то записываем кодовое слово
+    }
+    else if(activeCheckbox.checked === true) { // Если активный чекбокс активен
+        conditionSibling = collectionElementsSiblings.every( element => element.checked === true); // Проверка все ли соседние чекбоксы в одинаковом состоянии
+    }
+    else if(activeCheckbox.checked === false) {      
+        conditionSibling = collectionElementsSiblings.every( element => element.checked === false); // Проверка все ли соседние чекбоксы в одинаковом состоянии
+    };
+
+
+
+    if(conditionSibling === 'indeterminate') {  // Если по очередной проходке выясняется что в коллекции соседних элементов первый в промежуточном состоянии
+        parentCheckbox.indeterminate = true;    // то родительский чекбокс данной коллекции должен быть в промежуточном состоянии
+    }
+    else if(conditionSibling) {
+        parentCheckbox.indeterminate = false;
+        parentCheckbox.checked = activeCheckbox.checked; // если все элементы выбраны или не выбраны то ставим родительскому чекбоксу состояние активного чекбокса
     }
     else {
-        arr.forEach(el => el.indeterminate = true);
-    };
-
+        parentCheckbox.indeterminate = true;  // При первой проходке если все элементы в коллекции соседних элементов не в одинаковом состоянии, родительскому чекбоксу
+    };                                          // актуальной коллекции присваиваем промежуточное состояние.
+    console.log(conditionSibling)
+    findSiblingElements(parentCheckbox);
 };
-
-/////// ==================== END Работа с верхними элементами checked=true
-
-
 
 
 
 function addEventListenerToCheckbox(el) {  // Навешивание слушателя собыиий на сработавший элемент
     el.addEventListener('change', e => {
         
-        collectingChildElements(el);
+        collectingChildElements(el); // Собераем дочерние элементы
 
-        addCheckedToChildsElements(el);
+        addCheckedToChildsElements(el); // Присваиваем состояние дочерним элементам
         
-        collectingCollectionUpperCheckboxes(el.closest('.interest'), el);
+        findSiblingElements(el); // Ищем соседние элементы относительно активного
 
     },{'once' : true});
 };
@@ -112,6 +100,9 @@ interestsMain.addEventListener('click', e => {
         addEventListenerToCheckbox(e.target);
     };
 });
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 // Простая версия
