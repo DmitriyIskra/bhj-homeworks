@@ -9,7 +9,7 @@ let response;
 
 
 
-xhr = new XMLHttpRequest();  // ПЕРВОЕ ЗАПОЛНЕНИЕ СТРАНИЦЫ
+let xhr = new XMLHttpRequest();  // ПЕРВОЕ ЗАПОЛНЕНИЕ СТРАНИЦЫ
 
 xhr.open('GET', 'https://students.netoservices.ru/nestjs-backend/poll');
 
@@ -39,7 +39,7 @@ xhr.addEventListener('readystatechange', e => {
 
 setInterval(e => {  // ОБНОВЛЕНЕ СТРАНИЦЫ
  
-    xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
 
     xhr.open('GET', 'https://students.netoservices.ru/nestjs-backend/poll');
 
