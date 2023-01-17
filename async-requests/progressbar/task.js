@@ -14,19 +14,8 @@ form.addEventListener('submit', e => {
     
 
     xhr.upload.addEventListener('progress', e => {
-               console.log(e)
-
-        switch (xhr.readyState) {
-            case 2: progressLine.value = '0.25'
-                    progressLine.value = '0.50'
-            break;
-            case 3: progressLine.value = '0.75'
-                    progressLine.value = '0.95'
-            break;
-            case 4: progressLine.value = '1'
-            break;
-        };
+               progressLine.value = `${e.loaded / e.total}`
     });
 
     xhr.send(formData);    
-});
+}); 
