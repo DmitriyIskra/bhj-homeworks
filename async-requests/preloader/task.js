@@ -11,7 +11,7 @@ xhr.open('GET', 'https://students.netoservices.ru/nestjs-backend/slow-get-course
 xhr.send();
 
 xhr.addEventListener('readystatechange', e => {
-    if(xhr.readyState === xhr.DONE) {
+    if(xhr.readyState === xhr.DONE && xhr.status === 200) {
         loader.classList.remove('loader_active');
         responseValutesObject = JSON.parse(xhr.responseText);
          
