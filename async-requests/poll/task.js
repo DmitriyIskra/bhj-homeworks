@@ -15,8 +15,8 @@ xhr.open('GET', 'https://students.netoservices.ru/nestjs-backend/poll');
 
 xhr.send();
 
-xhr.addEventListener('readystatechange', e => {
-    if(xhr.readyState === xhr.DONE) {
+xhr.addEventListener('load', e => {
+    if(xhr.readyState === xhr.DONE && xhr.status === 200) {
         response = xhr.responseText;
 
         response = JSON.parse(response);
@@ -24,13 +24,11 @@ xhr.addEventListener('readystatechange', e => {
         pollTitle.textContent = response.data.title;
 
         response.data.answers.forEach( (el, index, array) => {
-            pollAnswers.insertAdjacentHTML(
-                'beforeend', `
-                <button class="poll__answer">
-                    ${response.data.answers[index]}
-                </button>
-                `
-            );
+            let buttonPollAnswer = document.createElement('button');
+            buttonPollAnswer.classList.add('poll__answer');
+            buttonPollAnswer.textContent = `${response.data.answers[index]}`;
+
+            pollAnswers.prepend(buttonPollAnswer);
         });
     };
 });
@@ -57,13 +55,11 @@ setInterval(e => {  // ОБНОВЛЕНЕ СТРАНИЦЫ
             pollTitle.textContent = response.data.title;
 
             response.data.answers.forEach( (el, index, array) => {
-                pollAnswers.insertAdjacentHTML(
-                    'beforeend', `
-                    <button class="poll__answer">
-                        ${response.data.answers[index]}
-                    </button>
-                    `
-                );
+                let buttonPollAnswer = document.createElement('button');
+                buttonPollAnswer.classList.add('poll__answer');
+                buttonPollAnswer.textContent = `${response.data.answers[index]}`;
+
+                pollAnswers.prepend(buttonPollAnswer);
             });
         };
     });
