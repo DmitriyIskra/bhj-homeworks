@@ -3,7 +3,8 @@ let resultCookie;
 const modal = document.querySelector('.modal');
 const modalClose = document.querySelector('.modal__close');
 
-modalClose.addEventListener('click', e => {
+
+modalClose.addEventListener('click', e => { // Закрытие модального окна и добавление информации в cookie
     modal.classList.remove('modal_active');
 
     setCookie('conditionModal', 'true')
@@ -11,7 +12,7 @@ modalClose.addEventListener('click', e => {
 
 
 
-function setCookie(name, value) {
+function setCookie(name, value) {     
     document.cookie = `${name}=${encodeURIComponent(value)}`
 };
 
@@ -23,7 +24,7 @@ function getCookie(name) {
 
 
 
-window.addEventListener('load', e => {
+window.addEventListener('load', e => {  // Проверка cookie при загрузке страницы
     try {
         resultCookie = getCookie('conditionModal');
     }
